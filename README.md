@@ -8,9 +8,14 @@ They were trained on the full LIVE or TID2013 database respectively, as used in 
 >                   [--gpu GPU]
 >                   INPUT [REF]
 
-## TODO: 
+## Dependencies
+* [chainer](http://chainer.org/)
+* scikit-learn
+* opencv
+
+## TODO 
 * add training code
 * add cpu support (minor change)
-* remove opencv dependency (minor change)
+* remove opencv and scikit-learn dependencies for loading data (minor changes)
 
 [arxiv]: https://arxiv.org

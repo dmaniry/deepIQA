@@ -66,7 +66,6 @@ for i in six.moves.range(0, X.shape[0], batchsize):
      if FR:
           X_ref_batch = X_ref[i:i + batchsize]
           X_ref_batch = xp.array(X_ref_batch.astype(np.float32))
-          print X_ref_batch.shape, X_batch.shape
           model.forward(X_batch, X_ref_batch, t, False, n_patches_per_image=X_batch.shape[0])
      else:
           model.forward(X_batch, t, False, X_batch.shape[0])

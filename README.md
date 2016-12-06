@@ -1,3 +1,3 @@
 # deepIQA
 
-TODO: write README, add fr model, add training code
+TODO: write README, add training code

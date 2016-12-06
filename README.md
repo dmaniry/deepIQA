@@ -12,4 +12,5 @@ They were trained on the full LIVE or TID2013 database respectively, as used in 
 * add training code
 * add cpu support (minor change)
 * remove opencv dependency (minor change)
-* 
+
+[arxiv]: https://arxiv.org

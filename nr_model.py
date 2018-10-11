@@ -43,7 +43,7 @@ class Model(chainer.Chain):
     def forward(self, x_data, y_data, train=True, n_patches=32):
 
         if not isinstance(x_data, Variable):
-            x = Variable(x_data, volatile=not train)
+            x = Variable(x_data)
         else:
             x = x_data
             x_data = x.data
@@ -74,17 +74,17 @@ class Model(chainer.Chain):
         h_ = h
         self.h = h_
 
-        h = F.dropout(F.relu(self.fc1(h_)), train=train, ratio=0.5)
+        h = F.dropout(F.relu(self.fc1(h_)), ratio=0.5)
         h = self.fc2(h)
         
         if self.top == "weighted":
-            a = F.dropout(F.relu(self.fc1_a(h_)), train=train, ratio=0.5)
+            a = F.dropout(F.relu(self.fc1_a(h_)), ratio=0.5)
             a = F.relu(self.fc2_a(a))+0.000001
-            t = Variable(y_data, volatile=not train)
+            t = Variable(y_data)
             self.weighted_loss(h, a, t)
         elif self.top == "patchwise":
-            a = Variable(xp.ones_like(h.data), volatile=not train)
-            t = Variable(xp.repeat(y_data, n_patches), volatile=not train)
+            a = Variable(xp.ones_like(h.data))
+            t = Variable(xp.repeat(y_data, n_patches))
             self.patchwise_loss(h, a, t)
 
 

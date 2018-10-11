@@ -79,7 +79,7 @@ class FRModel(chainer.Chain):
         xp = cuda.cupy
 
         if not isinstance(x_data, Variable):
-            x = Variable(x_data, volatile=not train)
+            x = Variable(x_data)
         else:
             x = x_data
             x_data = x.data
@@ -87,27 +87,27 @@ class FRModel(chainer.Chain):
     	self.n_images = y_data.shape[0]
     	self.n_patches = x_data.shape[0]
     	self.n_patches_per_image = n_patches_per_image
-        x_ref = Variable(x_ref_data, volatile=not train)
+        x_ref = Variable(x_ref_data)
        
-        h = self.extract_features(x, train=train)
+        h = self.extract_features(x)
         self.h = h
 
-        h_ref = self.extract_features(x_ref, train=train)
+        h_ref = self.extract_features(x_ref)
 
         h = F.concat((h-h_ref, h, h_ref))
 
 	h_ = h # save intermediate features
-        h = F.dropout(F.relu(self.fc1(h)), train=train, ratio=0.5)
+        h = F.dropout(F.relu(self.fc1(h)), ratio=0.5)
         h = self.fc2(h)
 
         if self.top == "weighted":
-            a = F.dropout(F.relu(self.fc1_a(h_)), train=train, ratio=0.5)
+            a = F.dropout(F.relu(self.fc1_a(h_)), ratio=0.5)
             a = F.relu(self.fc2_a(a))+0.000001
-            t = Variable(y_data, volatile=not train)
+            t = Variable(y_data)
             self.weighted_loss(h, a, t)
         elif self.top == "patchwise":
-            a = Variable(xp.ones_like(h.data), volatile=not train)
-            t = Variable(xp.repeat(y_data, n_patches_per_image), volatile=not train)
+            a = Variable(xp.ones_like(h.data))
+            t = Variable(xp.repeat(y_data, n_patches_per_image))
             self.patchwise_loss(h, a, t)
 
         if train:

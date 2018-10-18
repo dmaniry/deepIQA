@@ -47,9 +47,9 @@ class Model(chainer.Chain):
         else:
             x = x_data
             x_data = x.data
-    	self.n_images = y_data.shape[0]
-    	self.n_patches = x_data.shape[0]
-    	self.n_patches_per_image = self.n_patches / self.n_images
+        self.n_images = y_data.shape[0]
+        self.n_patches = x_data.shape[0]
+        self.n_patches_per_image = self.n_patches / self.n_images
 
         h = F.relu(self.conv1(x))
         h = F.relu(self.conv2(h))
@@ -95,18 +95,18 @@ class Model(chainer.Chain):
 
 
     def patchwise_loss(self, h, a, t):
-    	self.loss = F.sum(abs(h - F.reshape(t, (-1,1)))) 
-    	self.loss /= self.n_patches
-    	if self.n_images > 1:
-	    	h = F.split_axis(h, self.n_images, 0)
-	    	a = F.split_axis(a, self.n_images, 0)
+        self.loss = F.sum(abs(h - F.reshape(t, (-1,1)))) 
+        self.loss /= self.n_patches
+        if self.n_images > 1:
+            h = F.split_axis(h, self.n_images, 0)
+            a = F.split_axis(a, self.n_images, 0)
         else:
             h, a = [h], [a]
-    	self.y = h
-    	self.a = a
+        self.y = h
+        self.a = a
 
     def weighted_loss(self, h, a, t):
-    	self.loss = 0
+        self.loss = 0
         if self.n_images > 1:
             h = F.split_axis(h, self.n_images, 0)
             a = F.split_axis(a, self.n_images, 0)
@@ -114,7 +114,7 @@ class Model(chainer.Chain):
         else:
             h, a, t = [h], [a], [t]
 
-        for i in xrange(self.n_images):
+        for i in range(self.n_images):
             y = F.sum(h[i]*a[i], 0) / F.sum(a[i], 0)
             self.loss += abs(y - F.reshape(t[i], (1,)))
         self.loss /= self.n_images

@@ -11,7 +11,7 @@ They were trained on the full LIVE or TID2013 database respectively, as used in 
 ## Dependencies
 * [chainer](http://chainer.org/)
 * scikit-learn
-* opencv
+* ~~opencv~~
 
 ## TODO 
 * add training code

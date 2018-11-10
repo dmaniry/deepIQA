@@ -9,7 +9,7 @@ from chainer import cuda
 from chainer import optimizers
 from chainer import serializers
 
-import cv2
+import imageio
 from sklearn.feature_extraction.image import extract_patches
      
 from nr_model import Model
@@ -44,13 +44,11 @@ serializers.load_hdf5(args.model, model)
 model.to_gpu()
 
 if FR:
-     ref_img = cv2.imread(args.REF)
-     ref_img = cv2.cvtColor(ref_img, cv2.COLOR_BGR2RGB)
+     ref_img = imageio.imread(args.REF)
      patches = extract_patches(ref_img, (32,32,3), 32)
      X_ref = np.transpose(patches.reshape((-1, 32, 32, 3)), (0, 3, 1, 2))
 
-img = cv2.imread(args.INPUT)
-img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+img = imageio.imread(args.INPUT)
 patches = extract_patches(img, (32,32,3), 32)
 X = np.transpose(patches.reshape((-1, 32, 32, 3)), (0, 3, 1, 2))
 

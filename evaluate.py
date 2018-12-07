@@ -1,19 +1,43 @@
 #!/usr/bin/python2
 import numpy as np
-import argparse
+from numpy.lib.stride_tricks import as_strided
 
 import chainer
-import six
 from chainer import computational_graph
 from chainer import cuda
 from chainer import optimizers
 from chainer import serializers
 
+import argparse
+import six
 import imageio
-from sklearn.feature_extraction.image import extract_patches
+import numbers
      
 from nr_model import Model
 from fr_model import FRModel
+
+
+def extract_patches(arr, patch_shape=(32,32,3), extraction_step=32):
+    arr_ndim = arr.ndim
+
+    if isinstance(patch_shape, numbers.Number):
+        patch_shape = tuple([patch_shape] * arr_ndim)
+    if isinstance(extraction_step, numbers.Number):
+        extraction_step = tuple([extraction_step] * arr_ndim)
+
+    patch_strides = arr.strides
+
+    slices = tuple(slice(None, None, st) for st in extraction_step)
+    indexing_strides = arr[slices].strides
+
+    patch_indices_shape = ((np.array(arr.shape) - np.array(patch_shape)) //
+                           np.array(extraction_step)) + 1
+
+    shape = tuple(list(patch_indices_shape) + list(patch_shape))
+    strides = tuple(list(indexing_strides) + list(patch_strides))
+
+    patches = as_strided(arr, shape=shape, strides=strides)
+    return patches
 
 
 parser = argparse.ArgumentParser(description='evaluate.py')
@@ -25,8 +49,8 @@ parser.add_argument('--top', choices=('patchwise', 'weighted'),
                     default='weighted', help='top layer and loss definition')
 parser.add_argument('--gpu', '-g', default=0, type=int,
                     help='GPU ID')
-
 args = parser.parse_args()
+
 
 FR = True
 if args.REF == "":
@@ -37,19 +61,21 @@ if FR:
 else:
      model = Model(top=args.top)
 
+
 cuda.cudnn_enabled = True
 cuda.check_cuda_available()
 xp = cuda.cupy
 serializers.load_hdf5(args.model, model)
 model.to_gpu()
 
+
 if FR:
      ref_img = imageio.imread(args.REF)
-     patches = extract_patches(ref_img, (32,32,3), 32)
+     patches = extract_patches(ref_img)
      X_ref = np.transpose(patches.reshape((-1, 32, 32, 3)), (0, 3, 1, 2))
 
 img = imageio.imread(args.INPUT)
-patches = extract_patches(img, (32,32,3), 32)
+patches = extract_patches(img)
 X = np.transpose(patches.reshape((-1, 32, 32, 3)), (0, 3, 1, 2))
 
 

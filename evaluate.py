@@ -52,6 +52,10 @@ parser.add_argument('--gpu', '-g', default=0, type=int,
 args = parser.parse_args()
 
 
+chainer.global_config.train = False
+chainer.global_config.cudnn_deterministic = True
+
+
 FR = True
 if args.REF == "":
      FR = False

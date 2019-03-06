@@ -17,5 +17,6 @@ They were trained on the full LIVE or TID2013 database respectively, as used in 
 * add training code
 * add cpu support (minor change)
 * ~~remove opencv and scikit-learn dependencies for loading data (minor changes)~~
+* ~~fix non-deterministic behaviour~~
 
 [arxiv]: http://arxiv.org/abs/1612.01697
